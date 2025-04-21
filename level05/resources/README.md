@@ -45,6 +45,7 @@ This reveals a cron job that runs every 2 minutes as the flag05 user, executing 
 - Third position (\*): Every day of month
 - Fourth position (\*): Every month
 - Fifth position (\*): Every day of week
+
   So this translates to: "Run every 2 minutes, 24/7"
 
 #### The Command Part
