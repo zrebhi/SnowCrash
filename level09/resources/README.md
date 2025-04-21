@@ -8,13 +8,7 @@
 
 ## Investigation Process
 
-By comparing the token file content with the program output:
-
-- Token content (with binary data): `b'f4kmm6p|=\x82\x7fp\x82n\x83\x82DB\x83Du{\x7f\x8c\x89'`
-- Program output when given token: `tpmhr`
-
-We notice that the program doesn't output the entire token content. This suggests it's transforming the input in some way.
-
+It seems like the program is transforming the token in some way.
 Testing with simple inputs confirmed the transformation pattern:
 
 ```
@@ -43,6 +37,7 @@ def decode(encoded_data):
 
     return decoded_string
 ```
+The `enumerate()` function in our decoder pairs each character with its position index.
 
 Applying this to the token content gives us the full decoded token: `f3iji1ju5yuevaus41q1afiuq`
 

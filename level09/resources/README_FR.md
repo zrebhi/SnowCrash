@@ -8,13 +8,7 @@
 
 ## Processus d'Investigation
 
-En comparant le contenu du fichier `token` avec la sortie du programme :
-
-- Contenu du token (avec données binaires) : `b'f4kmm6p|=\x82\x7fp\x82n\x83\x82DB\x83Du{\x7f\x8c\x89'`
-- Sortie du programme lorsqu'on lui donne `token` : `tpmhr`
-
-Nous remarquons que le programme n'affiche pas tout le contenu du token. Cela suggère qu'il transforme l'entrée d'une manière ou d'une autre.
-
+Il semble que le programme transforme le jeton d'une certaine manière.
 Tester avec des entrées simples a confirmé le motif de transformation :
 
 ```
@@ -47,6 +41,7 @@ def decode(encoded_data):
     return decoded_string
 ```
 
+La fonction `enumerate()` dans notre décodeur associe chaque caractère à son index de position.
 En appliquant cela au contenu du token, nous obtenons le jeton décodé complet : `f3iji1ju5yuevaus41q1afiuq`
 
 ## Étapes pour Résoudre
