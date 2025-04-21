@@ -65,7 +65,7 @@ prog = io.popen("echo "..pass.." | sha1sum", "r")
 Le script concatène directement l'entrée fournie par l'utilisateur (pass) dans la chaîne de commande shell sans aucune désinfection ni échappement. Cela permet à un client malveillant d'injecter des métacaractères shell (comme ;, &&, ||, $(...), `...`) pour exécuter des commandes arbitraires sur le serveur avec les privilèges de l'utilisateur flag11.
 
 ## Exploitation
-Pour exploiter cela, nous devons nous connecter au serveur et envoyer une charge utile (payload) qui inclut un séparateur de commandes suivi de la commande getflag.
+Pour exploiter cela, nous devons nous connecter au serveur et envoyer un code d'exploitation qui inclut un séparateur de commandes suivi de la commande getflag.
 
 Une méthode fiable consiste à rediriger la sortie de getflag vers un fichier que nous pourrons lire plus tard.
 
@@ -73,7 +73,7 @@ Une méthode fiable consiste à rediriger la sortie de getflag vers un fichier q
     ```bash
     nc 127.0.0.1 5151
     ```
-2. **Envoyer la charge utile**: Lorsque le mot de passe est demandé, envoyez une chaîne contenant l'injection de commande. 
+2. **Envoyer le code d'exploitation**: Lorsque le mot de passe est demandé, envoyez une chaîne contenant l'injection de commande. 
     Nous redirigeons la sortie de getflag vers un fichier temporaire (par exemple, /tmp/flag11_output) :
     ```bash
     whatever && getflag > /tmp/flag11_output

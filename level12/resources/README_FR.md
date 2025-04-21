@@ -59,12 +59,12 @@ La vulnérabilité a été exploitée en contournant les limitations de la conve
     ```
     Lorsque `/tmp/GETFLAG` est exécuté, il lance `getflag` et écrit la sortie dans `/tmp/FLAG`.
 
-2.  **Construire la Charge Utile (Payload) :** Le paramètre `x` a été conçu pour exécuter le script auxiliaire en utilisant des backticks et un chemin avec joker (`*`) :
+2.  **Construire le code d'exploitation:** Le paramètre `x` a été conçu pour exécuter le script auxiliaire en utilisant des backticks et un chemin avec joker (`*`) :
     *   Payload : `` `/*/GETFLAG` ``
-    *   Cette charge utile ne contient pas d'espaces, évitant le problème de la suppression des espaces.
+    *   Ce code d'exploitation ne contient pas d'espaces, évitant le problème de la suppression des espaces.
     *   Le joker `*` n'est pas affecté par la conversion en majuscules.
 
-3.  **Envoyer la Requête :** La charge utile a été envoyée au script via `nc` (l'encodage URL n'était pas strictement nécessaire ici car les caractères critiques `*`, `/`, `` ` `` passent souvent, mais encoder en `%60%2A%2FGETFLAG%60` fonctionnerait aussi) :
+3.  **Envoyer la Requête :** Le code d'exploitation a été envoyée au script via `nc` (l'encodage URL n'était pas strictement nécessaire ici car les caractères critiques `*`, `/`, `` ` `` passent souvent, mais encoder en `%60%2A%2FGETFLAG%60` fonctionnerait aussi) :
     ```http
     GET /?x=`/*/GETFLAG`&y=a HTTP/1.0
     ```

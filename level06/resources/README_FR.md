@@ -67,13 +67,15 @@ Le modificateur `/e` dans `preg_replace` évalue la chaîne de remplacement comm
     [x {${`getflag`}}]
     ```
 
-2.  Lorsque traité par le script PHP, cette charge utile fonctionne comme suit :
+2. Lorsque traité par le script PHP, ce code d'exploitation fonctionne comme suit:
 
-    -   Notre motif `[x {${`getflag`}}]` correspond à l'expression régulière.
-    -   Le modificateur `/e` fait que PHP évalue `y("{${`getflag`}}")` comme du code.
-    -   La syntaxe `${...}` en PHP est l'interpolation de variable.
-    -   Les accents graves `` ` `` exécutent des commandes shell et retournent leur sortie.
-    -   Donc, `getflag` est exécuté et sa sortie est retournée.
+   - Notre motif `` [x {${`getflag`}}] `` est détecté par l'expression régulière
+   - Le modificateur `/e` amène PHP à évaluer `` y("{${`getflag`}}") `` comme du code
+   - La syntaxe `${...}` en PHP est l'interpolation de variables:
+      1. Traite `` ${`getflag`} `` 
+      2. Exécute la commande `getflag` via les backticks
+      3. Remplace l'expression entière par le résultat de la commande
+   - Ainsi, `getflag` est exécuté et sa sortie est retournée
 
 3.  Exécution :
 

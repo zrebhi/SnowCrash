@@ -66,10 +66,12 @@ The `/e` modifier in preg_replace evaluates the replacement string as PHP code, 
 
 2. When processed by the PHP script, this payload works as follows:
 
-   - Our pattern `[x {${`getflag`}}]` is matched by the regex
-   - The `/e` modifier causes PHP to evaluate `y("{${`getflag`}}")` as code
-   - The `${...}` syntax in PHP is variable interpolation
-   - The backticks `` ` ` `` execute shell commands and return their output
+   - Our pattern `` [x {${`getflag`}}] `` is matched by the regex
+   - The `/e` modifier causes PHP to evaluate `` y("{${`getflag`}}") `` as code
+   - The `${...}` syntax in PHP is variable interpolation:
+      1. Processes `` ${`getflag`} `` 
+      2. Executes the `getflag` command via the backticks
+      3. Substitutes the entire expression with the command output
    - So `getflag` is executed and its output is returned
 
 3. Execution:
