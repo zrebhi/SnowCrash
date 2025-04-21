@@ -11,13 +11,7 @@ Dans ce niveau, nous avons rencontré un binaire SUID (`level07`) appartenant à
 Lorsque nous vérifions le binaire pour la première fois :
 
 ```console
-level07@SnowCrash:~$ ls -la
-total 24
-dr-x------ 1 level07 level07  120 Mar  5  2016 .
-d--x--x--x 1 root    users    340 Aug 30  2015 ..
--r-x------ 1 level07 level07  220 Apr  3  2012 .bash_logout
--r-x------ 1 level07 level07 3518 Aug 30  2015 .bashrc
--r-x------ 1 level07 level07  675 Apr  3  2012 .profile
+level07@SnowCrash:~$ ls -l
 -rwsr-sr-x 1 flag07  level07 8805 Mar  5  2016 level07
 ```
 
