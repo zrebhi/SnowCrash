@@ -45,6 +45,7 @@ Cela révèle une tâche cron qui s'exécute toutes les 2 minutes en tant qu'uti
 - Troisième position (`*`) : Tous les jours du mois
 - Quatrième position (`*`) : Tous les mois
 - Cinquième position (`*`) : Tous les jours de la semaine
+
   Cela se traduit donc par : "Exécuter toutes les 2 minutes, 24h/24, 7j/7"
 
 #### La partie commande
