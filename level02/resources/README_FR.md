@@ -65,7 +65,7 @@ En regardant le flux TCP, nous pouvions voir qu'après une invite "Password:", d
 
 ## Comprendre les retours arrière
 
-Les trois points consécutifs ('.') dans la capture représentent des caractères de retour arrière (backspace). L'utilisateur a tapé "ft_wandr", puis a appuyé trois fois sur retour arrière pour supprimer "ndr", et a ensuite tapé "NDReL0L".
+Les trois points consécutifs ('.') dans la capture représentent des caractères de retour arrière (backspace). Nous pouvons voir leur valeur ASCII, 7F([DEL] en hexa), dans le rapport de Wireshark. L'utilisateur a tapé "ft_wandr", puis a appuyé trois fois sur retour arrière pour supprimer "ndr", et a ensuite tapé "NDReL0L".
 
 Par conséquent, le mot de passe correct est : `ft_waNDReL0L`
 

@@ -8,7 +8,7 @@ This project presents a series of challenges, organized into levels (`level00` t
 
 ## Getting Started
 
-- To participate in the challenges, you'll need to use the provided Snow Crash virtual machine. You can download the ISO file here: [SnowCrash.iso](https://cdn.intra.42.fr/isos/SnowCrash.iso).
+- To participate in the challenges, you'll need to use the provided Snow Crash virtual machine. You can download the ISO file here: [SnowCrash.iso](https://cdn.intra.42.fr/isos/SnowCrash.iso)
 - Connect to the VM via SSH on port 4242 using the credentials provided in the subject for `level00`.
 
 ```bash
@@ -35,6 +35,6 @@ This project explores various cybersecurity concepts and techniques across its l
 
 ## Repository Purpose
 
-This repository serves as a record of the solutions and resources used to complete each level of the Snow Crash challenge, as required by the project guidelines (`en.subject.pdf`). Each `levelXX` directory contains the flag obtained for that level and a `resources` subdirectory detailing the steps taken and any scripts or notes used.
+This repository serves as a record of the solutions and resources used to complete each level of the Snow Crash challenge, as required by the project guidelines ([`en.subject.pdf`](https://github.com/zrebhi/SnowCrash/blob/master/en.subject.pdf)). Each `levelXX` directory contains the flag obtained for that level and a `resources` subdirectory detailing the steps taken and any scripts or notes used.
 
-Good luck, and have fun exploring the world of cybersecurity!
+Have fun exploring the world of cybersecurity!
