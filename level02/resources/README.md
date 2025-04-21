@@ -65,7 +65,7 @@ Looking at the TCP stream, we could see that after a "Password:" prompt, charact
 
 ## Understanding the Backspaces
 
-The three consecutive dots ('.') in the capture represent backspace characters. The user typed "ft_wandr", then pressed backspace three times to delete "ndr", and then typed "NDReL0L".
+The three consecutive dots ('.') in the capture represent backspace characters. We can see their ASCII value, 7F ([DEL] in hex), in Wireshark's report. The user typed "ft_wandr", then pressed backspace three times to delete "ndr", and then typed "NDReL0L".
 
 Therefore, the correct password is: `ft_waNDReL0L`
 
