@@ -91,7 +91,7 @@ int main(void)
   // Afficher le résultat
   printf("Jeton flag14 : %s\n", decrypted);
   
-  // Free the allocated memory
+  // Libère la mémoire allouée
   free(decrypted);
   
   return 0;
