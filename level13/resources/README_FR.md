@@ -94,51 +94,85 @@ Après avoir décompilé le binaire avec Ghidra, nous avons pu :
 
 ### Méthode 2 : Utilisation de GDB pour Contourner la Vérification
 
-Alternativement, nous avons utilisé GDB (GNU Debugger) pour manipuler le programme pendant l'exécution :
-
-```bash
-level13@SnowCrash:~$ gdb -q ./level13
-```
-
-Le flag `-q` démarre GDB en mode silencieux, supprimant les messages d'introduction et de copyright pour une sortie plus claire.
+Alternativement, nous pouvons utiliser GDB (GNU Debugger) pour manipuler le flux d'exécution et la mémoire du programme à l'exécution.
 
 **Étapes :**
 
-1. **Définir un point d'arrêt au début de la fonction principale :**
+1.  **Démarrer GDB avec le binaire :**
+    L'option `-q` démarre GDB en mode silencieux.
+    ```bash
+    level13@SnowCrash:~$ gdb -q ./level13
+    Reading symbols from /home/user/level13/level13...(no debugging symbols found)...done.
+    ```
 
-   ```
-   (gdb) break main
-   Breakpoint 1 at 0x804858f
-   ```
+2.  **Désassembler la fonction `main` :**
+    Cela nous aide à comprendre la logique du programme et à trouver la vérification de l'UID.
+    ```gdb
+    (gdb) disas main
+    Dump of assembler code for function main:
+       0x0804858c <+0>:     push   %ebp
+       0x0804858d <+1>:     mov    %esp,%ebp
+       0x0804858f <+3>:     and    $0xfffffff0,%esp
+       0x08048592 <+6>:     sub    $0x10,%esp
+       0x08048595 <+9>:     call   0x8048380 <getuid@plt>
+       0x0804859a <+14>:    cmp    $0x1092,%eax
+       0x0804859f <+19>:    je     0x080485cb <main+63>
+       0x080485a1 <+21>:    call   0x8048380 <getuid@plt>
+       0x080485a6 <+26>:    mov    $0x80486c8,%edx
+       0x080485ab <+31>:    movl   $0x1092,0x8(%esp)
+       0x080485b3 <+39>:    mov    %eax,0x4(%esp)
+       0x080485b7 <+43>:    mov    %edx,(%esp)
+       0x080485ba <+46>:    call   0x8048360 <printf@plt>
+       0x080485bf <+51>:    movl   $0x1,(%esp)
+       0x080485c6 <+58>:    call   0x80483a0 <exit@plt>
+       0x080485cb <+63>:    movl   $0x80486ef,(%esp)
+       0x080485d2 <+70>:    call   0x8048474 <ft_des>
+       0x080485d7 <+75>:    mov    $0x8048709,%edx
+       0x080485dc <+80>:    mov    %eax,0x4(%esp)
+       0x080485e0 <+84>:    mov    %edx,(%esp)
+       0x080485e3 <+87>:    call   0x8048360 <printf@plt>
+       0x080485e8 <+92>:    leave
+       0x080485e9 <+93>:    ret
+    End of assembler dump.
+    ```
+    D'après le désassemblage, nous voyons l'appel à `getuid()` à `0x08048595` et la comparaison à `0x0804859a` :
+    ```assembly
+       0x08048595 <+9>:     call   0x8048380 <getuid@plt>
+       0x0804859a <+14>:    cmp    $0x1092,%eax
+    ```
+    Le résultat de `getuid()` est stocké dans le registre `%eax`, qui est ensuite comparé à `0x1092` (décimal 4242).
 
-2. **Démarrer le programme :**
+3.  **Placer un point d'arrêt juste après l'appel à `getuid()` et avant la comparaison :**
+    Nous choisissons l'adresse `0x0804859a`, qui est l'instruction `cmp`. Cela nous permet de modifier `%eax` avant qu'il ne soit utilisé dans la comparaison.
+    ```gdb
+    (gdb) break *0x0804859a
+    Breakpoint 1 at 0x0804859a
+    ```
 
-   ```
-   (gdb) run
-   ```
+4.  **Exécuter le programme :**
+    ```gdb
+    (gdb) run main
+    Starting program: /home/user/level13/level13 main
 
-3. **Trouver où l'appel getuid() se produit :**
-   Lorsque nous arrivons au point d'arrêt, nous devons identifier où la fonction `getuid()` est appelée. Généralement, nous utiliserions `disas main` pour visualiser l'assemblage et identifier l'instruction.
+    Breakpoint 1, 0x0804859a in main ()
+    ```
+    Le programme s'arrête à notre point d'arrêt.
 
-4. **Modifier la valeur de retour de getuid() :**
-   Dans l'architecture x86, les valeurs de retour des fonctions sont stockées dans le registre `eax`. Après l'exécution de `getuid()` mais avant la comparaison, nous définissons :
+5.  **Modifier la valeur dans le registre `%eax` :**
+    Dans l'architecture x86, les valeurs de retour des fonctions sont généralement stockées dans le registre `%eax`. Nous mettons `%eax` à l'UID attendu, `0x1092` (4242).
+    ```gdb
+    (gdb) set $eax=0x1092
+    ```
 
-   ```
-   (gdb) set $eax = 4242
-   ```
+6.  **Continuer l'exécution :**
+    ```gdb
+    (gdb) continue
+    Continuing.
+    your token is 2A31L79asukciNyi8uppkEuSx
+    ```
+    Avec la valeur UID modifiée dans `%eax`, la comparaison `cmp $0x1092,%eax` réussira, et le programme continuera pour déchiffrer et afficher le jeton.
 
-   Cela change la valeur de retour de `getuid()` de notre UID réel (2013) à la valeur attendue (4242).
-
-5. **Continuer l'exécution :**
-   ```
-   (gdb) continue
-   ```
-   Avec la valeur UID modifiée en place, le programme continue au-delà de la vérification et déchiffre le jeton :
-   ```
-   your token is 2A31L79asukciNyi8uppkEuSx
-   ```
-
-Cette méthode ne nécessite pas de modification du binaire lui-même, mais change plutôt le comportement du programme à l'exécution en manipulant un registre CPU.
+Cette méthode ne nécessite pas de modifier le binaire lui-même, mais change plutôt le comportement du programme à l'exécution en manipulant un registre CPU.
 
 ## 5. Solution et Jeton
 

@@ -93,49 +93,83 @@ After decompiling the binary with Ghidra, we were able to:
 
 ### Method 2: Using GDB to Bypass the Check
 
-Alternatively, we used GDB (GNU Debugger) to manipulate the program during execution:
-
-```bash
-level13@SnowCrash:~$ gdb -q ./level13
-```
-
-The `-q` flag starts GDB in quiet mode, suppressing the introductory and copyright messages for a cleaner output.
+Alternatively, we can use GDB (GNU Debugger) to manipulate the program's execution flow and memory at runtime.
 
 **Steps:**
 
-1. **Set a breakpoint at the start of the main function:**
+1.  **Start GDB with the binary:**
+    The `-q` flag starts GDB in quiet mode.
+    ```bash
+    level13@SnowCrash:~$ gdb -q ./level13
+    Reading symbols from /home/user/level13/level13...(no debugging symbols found)...done.
+    ```
 
-   ```
-   (gdb) break main
-   Breakpoint 1 at 0x804858f
-   ```
+2.  **Disassemble the `main` function:**
+    This helps us understand the program's logic and find the UID check.
+    ```gdb
+    (gdb) disas main
+    Dump of assembler code for function main:
+       0x0804858c <+0>:     push   %ebp
+       0x0804858d <+1>:     mov    %esp,%ebp
+       0x0804858f <+3>:     and    $0xfffffff0,%esp
+       0x08048592 <+6>:     sub    $0x10,%esp
+       0x08048595 <+9>:     call   0x8048380 <getuid@plt>
+       0x0804859a <+14>:    cmp    $0x1092,%eax
+       0x0804859f <+19>:    je     0x080485cb <main+63>
+       0x080485a1 <+21>:    call   0x8048380 <getuid@plt>
+       0x080485a6 <+26>:    mov    $0x80486c8,%edx
+       0x080485ab <+31>:    movl   $0x1092,0x8(%esp)
+       0x080485b3 <+39>:    mov    %eax,0x4(%esp)
+       0x080485b7 <+43>:    mov    %edx,(%esp)
+       0x080485ba <+46>:    call   0x8048360 <printf@plt>
+       0x080485bf <+51>:    movl   $0x1,(%esp)
+       0x080485c6 <+58>:    call   0x80483a0 <exit@plt>
+       0x080485cb <+63>:    movl   $0x80486ef,(%esp)
+       0x080485d2 <+70>:    call   0x8048474 <ft_des>
+       0x080485d7 <+75>:    mov    $0x8048709,%edx
+       0x080485dc <+80>:    mov    %eax,0x4(%esp)
+       0x080485e0 <+84>:    mov    %edx,(%esp)
+       0x080485e3 <+87>:    call   0x8048360 <printf@plt>
+       0x080485e8 <+92>:    leave
+       0x080485e9 <+93>:    ret
+    End of assembler dump.
+    ```
+    From the disassembly, we see the `getuid()` level13/resources/README.md:30 call at `0x08048595` and the comparison at `0x0804859a`:
+    ```assembly
+       0x08048595 <+9>:     call   0x8048380 <getuid@plt>
+       0x0804859a <+14>:    cmp    $0x1092,%eax
+    ```
+    The result of `getuid()`level13/resources/README.md:30 is stored in the `%eax` register, which is then compared with `0x1092` (decimal 4242).
 
-2. **Start the program:**
+3.  **Set a breakpoint right after the `getuid()` call and before the comparison:**
+    We choose the address `0x0804859a`, which is the `cmp` instruction. This allows us to modify `%eax` before it's used in the comparison.
+    ```gdb
+    (gdb) break *0x0804859a
+    Breakpoint 1 at 0x0804859a
+    ```
 
-   ```
-   (gdb) run
-   ```
+4.  **Run the program:**
+    ```gdb
+    (gdb) run main
+    Starting program: /home/user/level13/level13 main
 
-3. **Find where the getuid() call occurs:**
-   When we run to the breakpoint, we need to identify where the `getuid()` function is called. Typically, we'd use `disas main` to view the assembly and identify the instruction.
+    Breakpoint 1, 0x0804859a in main ()
+    ```
+    The program stops at our breakpoint.
 
-4. **Modify the return value of getuid():**
-   In x86 architecture, function return values are stored in the `eax` register. After `getuid()` executes but before the comparison happens, we set:
+5.  **Modify the value in the `%eax` register:**
+    In x86 architecture, function return values are typically stored in the `%eax` register. We set `%eax` to the expected UID, `0x1092` (4242).
+    ```gdb
+    (gdb) set $eax=0x1092
+    ```
 
-   ```
-   (gdb) set $eax = 4242
-   ```
-
-   This changes the return value of `getuid()` from our actual UID (2013) to the expected value (4242).
-
-5. **Continue execution:**
-   ```
-   (gdb) continue
-   ```
-   With the modified UID value in place, the program continues past the check and decrypts the token:
-   ```
-   your token is 2A31L79asukciNyi8uppkEuSx
-   ```
+6.  **Continue execution:**
+    ```gdb
+    (gdb) continue
+    Continuing.
+    your token is 2A31L79asukciNyi8uppkEuSx
+    ```
+    With the modified UID value in `%eax`, the comparison `cmp $0x1092,%eax` will succeed, and the program proceeds to decrypt and print the token.
 
 This method doesn't require modifying the binary itself, instead changing the program's behavior at runtime by manipulating a CPU register.
 

@@ -27,4 +27,3 @@ sub n {
 }
 
 n(t(param("x"), param("y")));
-GET /?x=`GETFLAG`&y=a HTTP/1.0

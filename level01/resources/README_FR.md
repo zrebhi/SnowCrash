@@ -39,7 +39,10 @@ Pour craquer ce hash de mot de passe, j'ai utilisé John the Ripper, un outil po
 2. Ensuite, j'ai utilisé John the Ripper pour craquer le mot de passe :
 
    ```bash
-   john flag01.txt
+   cd src
+   make clean linux-x86-64 # Remplacez par votre OS
+   cd ../run
+   ./john --show path/to/flag01.txt # Entrez le bon chemin vers votre fichier txt
    ```
 
 3. Après un certain temps, John the Ripper a trouvé le mot de passe : `abcdefg`
